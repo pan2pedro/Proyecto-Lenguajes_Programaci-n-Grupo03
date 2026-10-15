@@ -122,7 +122,10 @@ class Parser:
 
         self.operand()
 
-        if self.current()["type"] in COMPARISONS:
+        if (
+            self.current()["type"] == "OP"
+            and self.current()["value"] in COMPARISONS
+        ):
             self.index += 1
             self.operand()
 
