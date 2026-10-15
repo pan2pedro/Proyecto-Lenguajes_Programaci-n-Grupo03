@@ -1,1 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Reglas Empresariales</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"
+            defer></script>
+</head>
+<body>
+    <main class="container">
+        <header>
+            <p class="eyebrow">PYTHON · FLASK · MVC</p>
+            <h1>Analizador de reglas empresariales</h1>
+            <p class="subtitle">
+                Escribe una regla y comprueba su estructura léxica y sintáctica.
+            </p>
+        </header>
+
+        <section class="panel">
+            <label for="rule">Regla empresarial</label>
+            <textarea id="rule" rows="4"
+                placeholder="Ejemplo: VENTAS >= 1000 AND STOCK > 0"
+                spellcheck="false"></textarea>
+
+            <p class="hint">
+                Operadores: &gt;, &lt;, &gt;=, &lt;=, ==, !=, AND, OR y NOT.
+            </p>
+
+            <div class="actions">
+                <button id="analyzeBtn" type="button">Analizar regla</button>
+                <button id="clearBtn" class="secondary" type="button">
+                    Limpiar
+                </button>
+            </div>
+        </section>
+
+        <section id="status" class="status" role="status"
+                 aria-live="polite" hidden></section>
+
+        <section class="panel">
+            <h2>Análisis léxico</h2>
+            <p class="hint">Tokens reconocidos en la regla.</p>
+            <div id="tokens" class="tokens">
+                <p class="empty">Todavía no hay resultados.</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Análisis sintáctico</h2>
+            <div id="syntax">
+                <p class="empty">
+                    Aquí aparecerá el resultado de la validación.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>Analizador básico de reglas empresariales</p>
+        </footer>
+    </main>
+</body>
+</html>
 
