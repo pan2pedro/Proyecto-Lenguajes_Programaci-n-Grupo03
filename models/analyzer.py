@@ -20,7 +20,6 @@ COMPARISONS = {">", "<", ">=", "<=", "==", "!="}
 class AnalysisError(Exception):
     pass
 
-
 def tokenize(source):
     """Convierte el texto en una secuencia de tokens."""
     tokens = []
