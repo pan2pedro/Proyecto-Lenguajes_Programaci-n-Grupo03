@@ -1,39 +1,29 @@
 from flask import Flask, render_template, request, jsonify
-from models.analyzer import analyze
+from models.analyzer import analyze_source, token_details
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
-
-@app.route("/", methods=["GET"])
+@app.get("/")
 def index():
     return render_template("index.html")
 
-
-@app.route("/analyze", methods=["POST"])
-def analyze_rule():
-    data = request.get_json(silent=True) or {}
-    source = data.get("rule", "")
-
+@app.post("/analyze")
+def analyze():
+    payload = request.get_json(silent=True) or {}
+    source = payload.get("source", "")
     if not isinstance(source, str):
-        return jsonify({
-            "success": False,
-            "message": "La regla debe ser un texto.",
-            "error": "Tipo de dato no válido.",
-            "tokens": [],
-        }), 400
+        return jsonify({"error": "El contenido debe ser texto."}), 400
+    if len(source) > 100_000:
+        return jsonify({"error": "El texto supera el límite de 100 000 caracteres."}), 413
+    return jsonify(analyze_source(source))
 
-    if not source.strip():
-        return jsonify({
-            "success": False,
-            "message": "Escribe una regla antes de analizarla.",
-            "error": "Entrada vacía.",
-            "tokens": [],
-        }), 400
-
-    result = analyze(source)
-    return jsonify(result)
-
+@app.get("/token/<token_name>")
+def token_info(token_name):
+    info = token_details(token_name)
+    if info is None:
+        return jsonify({"error": "Token desconocido."}), 404
+    return jsonify(info)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
