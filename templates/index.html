@@ -1,66 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador de Reglas Empresariales</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"
-            defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analizador de reglas empresariales</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 <body>
-    <main class="container">
-        <header>
-            <p class="eyebrow">PYTHON · FLASK · MVC</p>
-            <h1>Analizador de reglas empresariales</h1>
-            <p class="subtitle">
-                Escribe una regla y comprueba su estructura léxica y sintáctica.
-            </p>
-        </header>
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">PYTHON · FLASK · MVC</p>
+    <h1>Analizador de reglas empresariales</h1>
+    <p>Ingresa un archivo o escribe reglas para revisar tokens, sintaxis y autómatas.</p>
+  </header>
 
-        <section class="panel">
-            <label for="rule">Regla empresarial</label>
-            <textarea id="rule" rows="4"
-                placeholder="Ejemplo: VENTAS >= 1000 AND STOCK > 0"
-                spellcheck="false"></textarea>
+  <section class="panel">
+    <div class="section-head"><div><h2>Entrada del programa</h2><p>Admite archivos de texto plano .txt</p></div></div>
+    <label class="file-label" for="fileInput">Seleccionar archivo .txt</label>
+    <input id="fileInput" type="file" accept=".txt,text/plain">
+    <label for="source">Texto o reglas empresariales</label>
+    <textarea id="source" spellcheck="false" rows="8">INICIO;
+VENTAS RECIBE PEDIDO;
+VENTAS VERIFICA STOCK;
+SI STOCK DISPONIBLE ENTONCES;
+ALMACEN PREPARA PEDIDO;
+FIN;</textarea>
+    <div class="toolbar">
+      <button id="analyzeButton">Analizar entrada</button>
+      <button id="clearButton" class="secondary">Limpiar</button>
+      <span id="fileName" class="muted">Ningún archivo seleccionado</span>
+    </div>
+  </section>
 
-            <p class="hint">
-                Operadores: &gt;, &lt;, &gt;=, &lt;=, ==, !=, AND, OR y NOT.
-            </p>
+  <section class="panel">
+    <div class="section-head"><div><h2>Resultado de validación</h2><p id="summary">Ejecuta el análisis para ver los resultados.</p></div></div>
+    <div id="alert" class="alert" hidden></div>
+    <h3>Tokens usados</h3>
+    <div class="table-wrap"><table><thead><tr><th>TOKEN</th><th>LEXEMA</th><th>LÍNEA</th><th>COLUMNA</th><th>POSICIÓN</th></tr></thead><tbody id="tokensBody"><tr><td colspan="5" class="muted">Sin resultados.</td></tr></tbody></table></div>
+    <h3>Expresiones regulares (ER)</h3>
+    <div class="table-wrap"><table><thead><tr><th>TIPO DE LEXEMA</th><th>EXPRESIÓN REGULAR</th></tr></thead><tbody id="regexBody"></tbody></table></div>
+    <h3>Validación de reglas</h3>
+    <div class="table-wrap"><table><thead><tr><th>LÍNEA</th><th>REGLA</th><th>RESULTADO</th><th>DETALLE</th></tr></thead><tbody id="linesBody"><tr><td colspan="4" class="muted">Sin resultados.</td></tr></tbody></table></div>
+  </section>
 
-            <div class="actions">
-                <button id="analyzeBtn" type="button">Analizar regla</button>
-                <button id="clearBtn" class="secondary" type="button">
-                    Limpiar
-                </button>
-            </div>
-        </section>
+  <section class="panel">
+    <div class="section-head"><div><h2>Expresión regular, AFND y AFD por token</h2><p>Selecciona un token encontrado en el texto analizado.</p></div></div>
+    <label for="tokenSelect">Token</label>
+    <select id="tokenSelect"><option value="">Primero analiza una entrada</option></select>
+    <div id="automataContent" class="empty-state">Los autómatas aparecerán aquí.</div>
+  </section>
 
-        <section id="status" class="status" role="status"
-                 aria-live="polite" hidden></section>
-
-        <section class="panel">
-            <h2>Análisis léxico</h2>
-            <p class="hint">Tokens reconocidos en la regla.</p>
-            <div id="tokens" class="tokens">
-                <p class="empty">Todavía no hay resultados.</p>
-            </div>
-        </section>
-
-        <section class="panel">
-            <h2>Análisis sintáctico</h2>
-            <div id="syntax">
-                <p class="empty">
-                    Aquí aparecerá el resultado de la validación.
-                </p>
-            </div>
-        </section>
-
-        <footer>
-            <p>Analizador básico de reglas empresariales</p>
-        </footer>
-    </main>
+  <section class="panel">
+    <div class="section-head"><div><h2>Gramática y árboles de derivación</h2><p>Selecciona una línea sintácticamente válida para explorar sus árboles.</p></div></div>
+    <label for="lineSelect">Línea validada</label>
+    <select id="lineSelect"><option value="">Primero analiza una entrada</option></select>
+    <div class="tree-grid">
+      <div><h3>Árbol sintáctico / derivación</h3><div id="syntaxTree" class="tree empty-state">Sin árbol disponible.</div></div>
+      <div><h3>Árbol semántico</h3><div id="semanticTree" class="tree empty-state">Sin árbol disponible.</div></div>
+    </div>
+  </section>
+  <footer>Prototipo académico · Analizador léxico y sintáctico básico</footer>
+</main>
 </body>
 </html>
-
