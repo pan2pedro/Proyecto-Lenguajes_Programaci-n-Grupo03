@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RuleCheck</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header><div class="logo">R</div><div><b>RuleCheck</b><br><small>Validador de reglas empresariales</small></div></header>
+<main>
+  <p class="eyebrow">Python · Flask · MVC</p>
+  <h1>{{ enunciado.titulo }}</h1>
+
+  <section class="card">
+    <h2>Entrada del programa</h2>
+    <p class="muted">Sube un archivo .txt o escribe una regla por línea (cada regla termina en <code>;</code>).</p>
+    {% if aviso %}<p class="err">{{ aviso }}</p>{% endif %}
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="archivo" id="archivo" accept=".txt">
+      <textarea name="texto" id="texto" rows="11" spellcheck="false">{{ texto }}</textarea>
+      <button class="btn">Analizar entrada</button>
+      <button type="button" class="btn ghost" onclick="document.getElementById('texto').value='';document.getElementById('archivo').value=''">Limpiar</button>
+    </form>
+  </section>
+
+{% if r %}
+  {% if r.vacio %}<section class="card"><p class="err">No hay texto para analizar.</p></section>{% else %}
+  <section class="card">
+    <h2>Resultado del análisis</h2>
+    <div class="stats"><div><span>Tokens identificados</span><b>{{ r.n_tokens }}</b></div>
+      <div><span>Errores detectados</span><b>{{ r.errores }}</b></div></div>
+
+    <h3>1. Tokens y lexemas</h3>
+    <div class="scroll"><table><tr><th>Token</th><th>Lexema</th><th>Línea</th><th>Columna</th><th>Posición</th></tr>
+    {% for t in r.tokens %}<tr class="{{ 'bad' if t.type=='ERROR' }}"><td>{{ t.type }}</td><td><code>{{ t.lexeme }}</code></td><td>{{ t.line }}</td><td>{{ t.col }}</td><td>{{ t.pos }}</td></tr>{% endfor %}</table></div>
+
+    <h3>2. Expresiones regulares (ER)</h3>
+    <div class="scroll"><table><tr><th>Tipo</th><th>Lexema</th><th>Expresión regular</th></tr>
+    {% for e in r.er_rows %}<tr><td>{{ e.tipo }}</td><td>{{ e.lexema }}</td><td><code>{{ e.er }}</code></td></tr>{% endfor %}</table></div>
+
+    <h3>3. Validación de reglas</h3>
+    <div class="scroll"><table><tr><th>Línea</th><th>Regla</th><th>Resultado</th><th>Detalle</th></tr>
+    {% for v in r.rows %}<tr class="{{ '' if v.ok else 'bad' }}"><td>{{ v.line }}</td><td>{{ v.rule }}</td><td>{{ '✔ Válida' if v.ok else '✘ Error' }}</td><td>{{ v.detail }}</td></tr>{% endfor %}</table></div>
+  </section>
+
+  <section class="card">
+    <h2>4–9. ER, AFND, AFD, tabla, transiciones y quíntupla</h2>
+    <label>Elige un lexema o una clase de token</label>
+    <select id="selAuto">{% for a in r.automatas %}<option value="{{ loop.index0 }}">{{ a.label }}</option>{% endfor %}</select>
+    {% for a in r.automatas %}
+    <div class="auto" data-i="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+      {% if a.error %}<p class="err">{{ a.error }}</p>{% else %}
+      <h3>Expresión regular</h3><p><code>{{ a.er }}</code></p>
+      <h3>AFND (Thompson) — {{ a.afnd.n_states }} estados</h3><div class="scroll svg">{{ a.afnd.svg|safe }}</div>
+      <h3>AFD (construcción de subconjuntos)</h3><div class="scroll svg">{{ a.afd.svg|safe }}</div>
+      <p class="muted">Estados del AFD = subconjuntos de estados del AFND:
+        {% for n, s in a.afd.subsets %}<code>{{ n }}={{ s }}</code> {% endfor %}</p>
+      <h3>Tabla de transiciones</h3>
+      <div class="scroll"><table class="mini"><tr><th>δ</th>{% for c in a.afd.table.cols %}<th>{{ c }}</th>{% endfor %}</tr>
+      {% for row in a.afd.table.rows %}<tr><td><b>{{ row.state }}</b></td>{% for c in row.cells %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}</table></div>
+      <p class="muted">→ estado inicial · * estado de aceptación · — transición no definida</p>
+      <h3>Transiciones</h3><p class="trans">{% for t in a.afd.transitions %}<code>{{ t }}</code> {% endfor %}</p>
+      <h3>Quíntupla M = (Q, Σ, δ, q0, F)</h3>
+      <ul class="quint"><li><b>Q</b> = {{ a.afd.quintuple.Q }}</li><li><b>Σ</b> = {{ a.afd.quintuple.Sigma }}</li>
+      <li><b>δ</b> : {{ a.afd.quintuple.delta }}</li><li><b>q0</b> = {{ a.afd.quintuple.q0 }}</li><li><b>F</b> = {{ a.afd.quintuple.F }}</li></ul>
+      {% endif %}
+    </div>{% endfor %}
+  </section>
+
+  <section class="card">
+    <h2>Gramática y árboles de derivación</h2>
+    {% if r.arboles %}
+    <label>Línea validada</label>
+    <select id="selTree">{% for t in r.arboles %}<option value="{{ loop.index0 }}">{{ t.label }}</option>{% endfor %}</select>
+    {% for t in r.arboles %}
+    <div class="tr" data-i="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+      <div class="two"><div><h3>Árbol sintáctico / derivación</h3>{{ t.tree|safe }}
+        <p class="muted">Derivación por la izquierda:</p><ol class="deriv">{% for s in t.derivation %}<li>{{ s }}</li>{% endfor %}</ol></div>
+      <div><h3>Árbol semántico</h3>{{ t.semantic|safe }}</div></div>
+    </div>{% endfor %}
+    {% else %}<p class="muted">No hay líneas sintácticamente válidas.</p>{% endif %}
+  </section>
+  {% endif %}
+{% endif %}
+</main>
+<script>
+function bind(sel, cls){const s=document.getElementById(sel); if(!s) return;
+  s.onchange=()=>document.querySelectorAll('.'+cls).forEach(d=>d.hidden = d.dataset.i!==s.value);}
+bind('selAuto','auto'); bind('selTree','tr');
+document.getElementById('archivo').onchange=e=>{const f=e.target.files[0]; if(f){const r=new FileReader();
+  r.onload=()=>document.getElementById('texto').value=r.result; r.readAsText(f);}};
+</script>
+</body></html>

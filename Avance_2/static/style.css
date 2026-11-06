@@ -1,0 +1,23 @@
+:root{--bg:#f1f5f9;--card:#fff;--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--blue:#2f5bdc;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,Segoe UI,sans-serif}
+header{background:#0f172a;color:#fff;display:flex;gap:12px;align-items:center;padding:12px 28px}
+header small{color:#cbd5e1}.logo{width:36px;height:36px;border-radius:9px;background:#4f7cff;display:grid;place-items:center;font-weight:700}
+main{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+.eyebrow{color:var(--blue);font-weight:700;letter-spacing:.08em;font-size:12px;text-transform:uppercase;margin:0}
+h1{font-size:2rem;margin:.2em 0 .6em}h2{margin:0 0 .3em}h3{margin:1.4em 0 .4em;font-size:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:20px}
+.muted{color:var(--mut);font-size:13px}.err{color:var(--red);font-weight:600}
+textarea,select,input[type=file]{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:inherit;background:#fff;margin:6px 0 12px}
+textarea{font-family:Consolas,monospace;font-size:14px}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:10px 18px;font-weight:600;cursor:pointer}
+.btn.ghost{background:#e2e8f0;color:var(--ink)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}.stats div{background:#f1f5f9;border-radius:12px;padding:14px 18px}
+.stats span{display:block;color:var(--mut);font-size:13px}.stats b{font-size:1.8rem}
+.scroll{overflow-x:auto}.svg{border:1px dashed #cbd5e1;border-radius:10px;padding:6px;background:#fafcff}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+th{background:#f1f5f9;font-size:13px}table.mini{width:auto}table.mini td,table.mini th{text-align:center;min-width:48px}
+tr.bad td{background:#fef2f2;color:#991b1b}code{background:#f1f5f9;padding:1px 6px;border-radius:5px}
+.trans code{display:inline-block;margin:2px}.quint{list-style:none;padding:0}.quint li{margin:4px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+ul.tree,ul.tree ul{list-style:none;margin:0;padding-left:22px;border-left:2px solid #cbd5e1}ul.tree{border:0;padding:0}
+ul.tree li{margin:6px 0;position:relative}.lex{color:var(--blue);font-weight:600}.deriv{font-family:Consolas,monospace;font-size:13px}
