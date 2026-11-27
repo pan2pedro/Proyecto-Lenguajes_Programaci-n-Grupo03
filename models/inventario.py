@@ -1,12 +1,21 @@
+import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent / "database" / "farmacia.db"
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+def resolver_db_path() -> Path:
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return Path("/tmp/farmacia.db")
+    return BASE_DIR / "database" / "farmacia.db"
+
+DB_PATH = resolver_db_path()
 
 class Inventario:
-    def __init__(self, path=DB_PATH):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        self.path = str(path)
+    def __init__(self, path=None):
+        target_path = Path(path) if path is not None else resolver_db_path()
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        self.path = str(target_path)
         with self.conectar() as con:
             con.execute("""
                 CREATE TABLE IF NOT EXISTS medicamentos (
