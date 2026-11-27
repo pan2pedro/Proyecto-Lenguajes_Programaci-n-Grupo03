@@ -3,64 +3,83 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Analizador de reglas empresariales</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  <title>FARMA-LANG | Analizador léxico-sintáctico</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<main class="page">
-  <header class="hero">
-    <p class="eyebrow">PYTHON · FLASK · MVC</p>
-    <h1>Analizador de reglas empresariales</h1>
-    <p>Ingresa un archivo o escribe reglas para revisar tokens, sintaxis y autómatas.</p>
-  </header>
+<header class="topbar">
+  <div class="brand-mark">F</div>
+  <div><strong>FARMA-LANG</strong><span>Analizador léxico-sintáctico · Gestión farmacéutica</span></div>
+</header>
+<main class="container">
+  <section class="hero">
+    <p class="eyebrow">PROYECTO DE AUTOMATIZACIÓN EMPRESARIAL</p>
+    <h1>Analizador Léxico-Sintáctico de Gestión de una Farmacia</h1>
+    <p>Validación de instrucciones para el registro y administración de medicamentos.</p>
+  </section>
 
   <section class="panel">
-    <div class="section-head"><div><h2>Entrada del programa</h2><p>Admite archivos de texto plano .txt</p></div></div>
-    <label class="file-label" for="fileInput">Seleccionar archivo .txt</label>
-    <input id="fileInput" type="file" accept=".txt,text/plain">
-    <label for="source">Texto o reglas empresariales</label>
-    <textarea id="source" spellcheck="false" rows="8">INICIO;
-VENTAS RECIBE PEDIDO;
-VENTAS VERIFICA STOCK;
-SI STOCK DISPONIBLE ENTONCES;
-ALMACEN PREPARA PEDIDO;
-FIN;</textarea>
+    <div class="section-title"><span>01</span><div><h2>Entrada del programa</h2><p>Escriba instrucciones FARMA-LANG o cargue un archivo .txt.</p></div></div>
     <div class="toolbar">
-      <button id="analyzeButton">Analizar entrada</button>
-      <button id="clearButton" class="secondary">Limpiar</button>
-      <span id="fileName" class="muted">Ningún archivo seleccionado</span>
+      <label class="file-label" for="archivo">＋ Seleccionar archivo .txt</label>
+      <input id="archivo" type="file" accept=".txt,text/plain">
+      <span id="file-name" class="muted">Ningún archivo seleccionado</span>
+    </div>
+    <textarea id="codigo" spellcheck="false">REGISTRAR("PARACETAMOL", 500, 100, 0.50, 2027-12-31);
+CONSULTAR("PARACETAMOL");
+SALIDA("PARACETAMOL", 10);</textarea>
+    <div class="actions">
+      <button id="analizar" class="primary">Analizar instrucciones</button>
+      <button id="limpiar" class="secondary">Limpiar</button>
+      <span class="hint">Una instrucción por línea; cada instrucción termina en ;</span>
     </div>
   </section>
 
   <section class="panel">
-    <div class="section-head"><div><h2>Resultado de validación</h2><p id="summary">Ejecuta el análisis para ver los resultados.</p></div></div>
-    <div id="alert" class="alert" hidden></div>
-    <h3>Tokens usados</h3>
-    <div class="table-wrap"><table><thead><tr><th>TOKEN</th><th>LEXEMA</th><th>LÍNEA</th><th>COLUMNA</th><th>POSICIÓN</th></tr></thead><tbody id="tokensBody"><tr><td colspan="5" class="muted">Sin resultados.</td></tr></tbody></table></div>
-    <h3>Expresiones regulares (ER)</h3>
-    <div class="table-wrap"><table><thead><tr><th>TIPO DE LEXEMA</th><th>EXPRESIÓN REGULAR</th></tr></thead><tbody id="regexBody"></tbody></table></div>
-    <h3>Validación de reglas</h3>
-    <div class="table-wrap"><table><thead><tr><th>LÍNEA</th><th>REGLA</th><th>RESULTADO</th><th>DETALLE</th></tr></thead><tbody id="linesBody"><tr><td colspan="4" class="muted">Sin resultados.</td></tr></tbody></table></div>
+    <div class="section-title"><span>02</span><div><h2>Productos registrados</h2><p>Inventario almacenado en la base de datos SQLite.</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Medicamento</th><th>Concentración</th><th>Stock</th><th>Precio</th><th>Vencimiento</th></tr></thead><tbody id="inventario"><tr><td colspan="6">Cargando inventario…</td></tr></tbody></table></div>
   </section>
 
   <section class="panel">
-    <div class="section-head"><div><h2>Expresión regular, AFND y AFD por token</h2><p>Selecciona un token encontrado en el texto analizado.</p></div></div>
-    <label for="tokenSelect">Token</label>
-    <select id="tokenSelect"><option value="">Primero analiza una entrada</option></select>
-    <div id="automataContent" class="empty-state">Los autómatas aparecerán aquí.</div>
+    <div class="section-title"><span>03</span><div><h2>Resultados de validación</h2><p>Estado del análisis y ejecución empresarial.</p></div></div>
+    <div id="estado" class="status neutral">A la espera de instrucciones.</div>
+    <div id="resultados" class="result-list"></div>
   </section>
 
   <section class="panel">
-    <div class="section-head"><div><h2>Gramática y árboles de derivación</h2><p>Selecciona una línea sintácticamente válida para explorar sus árboles.</p></div></div>
-    <label for="lineSelect">Línea validada</label>
-    <select id="lineSelect"><option value="">Primero analiza una entrada</option></select>
-    <div class="tree-grid">
-      <div><h3>Árbol sintáctico / derivación</h3><div id="syntaxTree" class="tree empty-state">Sin árbol disponible.</div></div>
-      <div><h3>Árbol semántico</h3><div id="semanticTree" class="tree empty-state">Sin árbol disponible.</div></div>
+    <div class="section-title"><span>04</span><div><h2>Análisis léxico</h2><p>Tokens, lexemas y expresiones regulares reconocidas.</p></div></div>
+    <h3>Secuencia de tokens reconocidos</h3>
+    <div class="table-wrap"><table><thead><tr><th>Línea</th><th>Token</th><th>Lexema</th></tr></thead><tbody id="tokens"><tr><td colspan="3">Todavía no hay resultados.</td></tr></tbody></table></div>
+    <h3>Expresiones regulares del lenguaje</h3>
+    <div class="table-wrap"><table><thead><tr><th>Token</th><th>Patrón</th></tr></thead><tbody id="regex"></tbody></table></div>
+  </section>
+
+  <section class="panel">
+    <div class="section-title"><span>05</span><div><h2>Autómatas finitos</h2><p>Representación de ejemplo para el token NUMERO_ENTERO.</p></div></div>
+    <div class="automata-grid">
+      <div class="subpanel"><h3>AFND</h3><div class="diagram"><span class="state">q0</span><span class="arrow">0–9 →</span><span class="state final">q1</span><span class="loop">↻ 0–9</span></div><p class="muted">Estado inicial q0; estado final q1.</p></div>
+      <div class="subpanel"><h3>AFD</h3><div class="diagram"><span class="state">q0</span><span class="arrow">0–9 →</span><span class="state final">q1</span><span class="loop">↻ 0–9</span></div><p class="muted">Para [0-9]+, AFND y AFD pueden tener esta misma estructura.</p></div>
     </div>
+    <h3>Quíntupla y tabla de transiciones</h3>
+    <div id="automata-info" class="info-box">La información del autómata aparecerá al analizar.</div>
+    <div class="table-wrap"><table><thead><tr><th>Estado</th><th>Entrada 0–9</th></tr></thead><tbody><tr><td>→ q0</td><td>q1</td></tr><tr><td>* q1</td><td>q1</td></tr></tbody></table></div>
   </section>
-  <footer>Prototipo académico · Analizador léxico y sintáctico básico</footer>
+
+  <section class="panel">
+    <div class="section-title"><span>06</span><div><h2>Análisis sintáctico</h2><p>Gramática, derivaciones y árbol sintáctico.</p></div></div>
+    <h3>Gramática FARMA-LANG</h3>
+    <pre class="grammar">S → INSTRUCCION
+INSTRUCCION → REGISTRO | ACTUALIZACION | CONSULTA | SALIDA | ELIMINACION
+REGISTRO → REGISTRAR ( CADENA , NUMERO_ENTERO , NUMERO_ENTERO , NUMERO_DECIMAL , FECHA ) ;
+ACTUALIZACION → ACTUALIZAR ( CADENA , NUMERO_ENTERO ) ;
+CONSULTA → CONSULTAR ( CADENA ) ;
+SALIDA → SALIDA ( CADENA , NUMERO_ENTERO ) ;
+ELIMINACION → ELIMINAR ( CADENA ) ;</pre>
+    <h3>Árboles sintácticos generados</h3>
+    <div id="arboles" class="tree-list">Los árboles se mostrarán después de un análisis correcto.</div>
+  </section>
+  <footer>FARMA-LANG · Prototipo académico. Utilice datos ficticios durante las pruebas.</footer>
 </main>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
